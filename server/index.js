@@ -6,34 +6,41 @@ const { Pool } = require("pg");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const BASE_PATH = (
-    process.env.BASE_PATH || "/td-algorithme-ihme-p06/"
-).replace(/\/?$/, "/");
-
-const pool = process.env.DATABASE_URL
-    ? new Pool({
-        connectionString: process.env.DATABASE_URL,
-        max: 4
-    })
-    : null;
+// Connexion a PostgreSQL
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    max: 4
+});
 
 app.use(express.json());
 
-app.get("/api/health", (req, res) => {
-    res.json({
-        status: "ok",
-        application: "AceMetrics"
-    });
+// Verification de l'API et de la base de donnees
+app.get("/api/health", async (req, res) => {
+    try {
+        await pool.query("SELECT 1");
+
+        res.json({
+            status: "ok",
+            application: "AceMetrics"
+        });
+    } catch (error) {
+        res.status(503).json({
+            status: "unavailable"
+        });
+    }
 });
 
+// Dossier contenant React compile
 const distPath = path.join(__dirname, "../dist");
 
-app.use(BASE_PATH, express.static(distPath));
+app.use(express.static(distPath));
 
-app.get(BASE_PATH, (req, res) => {
+// Page d'accueil
+app.get("/", (req, res) => {
     res.sendFile(path.join(distPath, "index.html"));
 });
 
+// Demarrage du serveur
 app.listen(PORT, "0.0.0.0", () => {
     console.log(`AceMetrics demarre sur le port ${PORT}`);
 });
