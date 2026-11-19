@@ -30,6 +30,79 @@ app.get("/api/health", async (req, res) => {
     }
 });
 
+/* Creation de la table si elle n'existe pas */
+
+async function initialiserBase() {
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS matchs (
+            id SERIAL PRIMARY KEY,
+            adversaire VARCHAR(100) NOT NULL,
+            surface VARCHAR(30) NOT NULL,
+            resultat VARCHAR(20) NOT NULL,
+            CHECK (surface IN ('Dur', 'Terre battue', 'Gazon')),
+            CHECK (resultat IN ('Victoire', 'Défaite'))
+        )
+    `);
+}
+
+initialiserBase().catch(error => {
+    console.error("Erreur initialisation PostgreSQL :", error.message);
+});
+
+/* Recuperer tous les matchs */
+
+app.get("/api/matchs", async (req, res) => {
+    try {
+        const resultat = await pool.query(
+            "SELECT * FROM matchs ORDER BY id DESC"
+        );
+
+        res.json(resultat.rows);
+    } catch (error) {
+        console.error("Erreur lecture matchs :", error.message);
+        res.status(500).json({
+            erreur: "Impossible de recuperer les matchs"
+        });
+    }
+});
+
+/* Ajouter un nouveau match */
+
+app.post("/api/matchs", async (req, res) => {
+    const { adversaire, surface, resultat } = req.body || {};
+
+    const surfaces = ["Dur", "Terre battue", "Gazon"];
+    const resultats = ["Victoire", "Défaite"];
+
+    if (
+        typeof adversaire !== "string" ||
+        adversaire.trim().length === 0 ||
+        adversaire.trim().length > 100 ||
+        !surfaces.includes(surface) ||
+        !resultats.includes(resultat)
+    ) {
+        return res.status(400).json({
+            erreur: "Informations du match invalides"
+        });
+    }
+
+    try {
+        const reponse = await pool.query(
+            `INSERT INTO matchs (adversaire, surface, resultat)
+             VALUES ($1, $2, $3)
+             RETURNING *`,
+            [adversaire.trim(), surface, resultat]
+        );
+
+        res.status(201).json(reponse.rows[0]);
+    } catch (error) {
+        console.error("Erreur ajout match :", error.message);
+        res.status(500).json({
+            erreur: "Impossible d'enregistrer le match"
+        });
+    }
+});
+
 // Dossier contenant React compile
 const distPath = path.join(__dirname, "../dist");
 
