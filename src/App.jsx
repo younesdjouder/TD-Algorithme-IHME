@@ -117,12 +117,28 @@ body: JSON.stringify({
 
     return (
         <main>
-            <header>
-                <div>
-                    <h1>AceMetrics</h1>
-                    <p>Tableau de bord de performance au tennis</p>
-                </div>
-            </header>
+           
+<header className="hero">
+    <div className="hero-content">
+        <span className="hero-label">
+            TENNIS PERFORMANCE ANALYTICS
+        </span>
+
+        <h1>AceMetrics</h1>
+
+        <h2>Chaque match raconte une histoire.</h2>
+
+        <p>
+            Analyse tes résultats, suis tes performances
+            et progresse match après match.
+        </p>
+
+        <a href="#ajouter-match" className="hero-button">
+            + Ajouter un match
+        </a>
+    </div>
+</header>
+
 
             <section>
                 <h2>Vue d'ensemble</h2>
@@ -150,7 +166,7 @@ body: JSON.stringify({
                 </div>
             </section>
 
-            <section className="card">
+        <section className="card" id="ajouter-match">
                 <h2>Ajouter un match</h2>
 
                 <form onSubmit={ajouterMatch}>
