@@ -1,21 +1,59 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
+// Chemin de l'API, compatible avec le serveur IHME
+const API_URL = import.meta.env.BASE_URL + "api/matchs";
 
 function App() {
+    // Les matchs seront charges depuis PostgreSQL
+    const [matchs, setMatchs] = useState([]);
 
-    // Liste initiale de matchs fictifs
-    const [matchs, setMatchs] = useState([
-        { id: 1, adversaire: "Joueur A", surface: "Terre battue", resultat: "Victoire" },
-        { id: 2, adversaire: "Joueur B", surface: "Dur", resultat: "Défaite" },
-        { id: 3, adversaire: "Joueur C", surface: "Gazon", resultat: "Victoire" }
-    ]);
-
-    // Informations du formulaire
+    // Informations saisies dans le formulaire
     const [adversaire, setAdversaire] = useState("");
     const [surface, setSurface] = useState("Dur");
     const [resultat, setResultat] = useState("Victoire");
 
-    // Calcul automatique des statistiques
+    // Etats pour informer l'utilisateur
+    const [chargement, setChargement] = useState(true);
+    const [enregistrement, setEnregistrement] = useState(false);
+    const [erreur, setErreur] = useState("");
+
+    // Charger les matchs lors de l'ouverture de la page
+    useEffect(() => {
+        let actif = true;
+
+        async function chargerMatchs() {
+            try {
+                const reponse = await fetch(API_URL);
+
+                if (!reponse.ok) {
+                    throw new Error("Erreur de chargement");
+                }
+
+                const donnees = await reponse.json();
+
+                if (actif) {
+                    setMatchs(donnees);
+                }
+            } catch (error) {
+                if (actif) {
+                    setErreur("Impossible de charger les matchs.");
+                }
+            } finally {
+                if (actif) {
+                    setChargement(false);
+                }
+            }
+        }
+
+        chargerMatchs();
+
+        return () => {
+            actif = false;
+        };
+    }, []);
+
+    // Statistiques calculees automatiquement
     const total = matchs.length;
 
     const victoires = matchs.filter(
@@ -28,27 +66,48 @@ function App() {
         ? Math.round((victoires / total) * 100)
         : 0;
 
-    // Fonction appelée lors de l'ajout d'un match
-    function ajouterMatch(event) {
+    // Enregistrer un match dans PostgreSQL
+    async function ajouterMatch(event) {
         event.preventDefault();
 
-        if (adversaire.trim() === "") {
+        if (!adversaire.trim() || enregistrement) {
             return;
         }
 
-        const nouveauMatch = {
-            id: Date.now(),
-            adversaire: adversaire.trim(),
-            surface: surface,
-            resultat: resultat
-        };
+        setErreur("");
+        setEnregistrement(true);
 
-        setMatchs(anciensMatchs => [
-            ...anciensMatchs,
-            nouveauMatch
-        ]);
+        try {
+            const reponse = await fetch(API_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    adversaire: adversaire.trim(),
+                    surface: surface,
+                    resultat: resultat
+                })
+            });
 
-        setAdversaire("");
+            if (!reponse.ok) {
+                throw new Error("Erreur d'enregistrement");
+            }
+
+            const nouveauMatch = await reponse.json();
+
+            // Actualiser le tableau et les statistiques
+            setMatchs(anciensMatchs => [
+                nouveauMatch,
+                ...anciensMatchs
+            ]);
+
+            setAdversaire("");
+        } catch (error) {
+            setErreur("Impossible d'enregistrer le match.");
+        } finally {
+            setEnregistrement(false);
+        }
     }
 
     return (
@@ -93,10 +152,10 @@ function App() {
                     <label htmlFor="adversaire">
                         Adversaire
                     </label>
-
                     <input
                         id="adversaire"
                         type="text"
+                        maxLength={100}
                         value={adversaire}
                         onChange={event =>
                             setAdversaire(event.target.value)
@@ -105,10 +164,7 @@ function App() {
                         required
                     />
 
-                    <label htmlFor="surface">
-                        Surface
-                    </label>
-
+                    <label htmlFor="surface">Surface</label>
                     <select
                         id="surface"
                         value={surface}
@@ -121,10 +177,7 @@ function App() {
                         <option value="Gazon">Gazon</option>
                     </select>
 
-                    <label htmlFor="resultat">
-                        Résultat
-                    </label>
-
+                    <label htmlFor="resultat">Résultat</label>
                     <select
                         id="resultat"
                         value={resultat}
@@ -136,40 +189,51 @@ function App() {
                         <option value="Défaite">Défaite</option>
                     </select>
 
-                    <button type="submit">
-                        Ajouter le match
+                    <button type="submit" disabled={enregistrement}>
+                        {enregistrement
+                            ? "Enregistrement..."
+                            : "Ajouter le match"}
                     </button>
                 </form>
+
+                {erreur && <p role="alert">{erreur}</p>}
             </section>
 
             <section>
                 <h2>Historique des matchs</h2>
 
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Adversaire</th>
-                            <th>Surface</th>
-                            <th>Résultat</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {matchs.map(match => (
-                            <tr key={match.id}>
-                                <td>{match.adversaire}</td>
-                                <td>{match.surface}</td>
-                                <td className={
-                                    match.resultat === "Victoire"
-                                        ? "victoire"
-                                        : "defaite"
-                                }>
-                                    {match.resultat}
-                                </td>
+                {chargement ? (
+                    <p>Chargement des matchs...</p>
+                ) : (
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Adversaire</th>
+                                <th>Surface</th>
+                                <th>Résultat</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {matchs.map(match => (
+                                <tr key={match.id}>
+                                    <td>{match.adversaire}</td>
+                                    <td>{match.surface}</td>
+                                    <td className={
+                                        match.resultat === "Victoire"
+                                            ? "victoire"
+                                            : "defaite"
+                                    }>
+                                        {match.resultat}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
+
+                {!chargement && matchs.length === 0 && !erreur && (
+                    <p>Aucun match enregistré pour le moment.</p>
+                )}
 
                 <p>Données fictives de démonstration.</p>
             </section>
