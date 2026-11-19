@@ -34,25 +34,27 @@ app.get("/api/health", async (req, res) => {
 
 async function initialiserBase() {
     await pool.query(`
-    
-await pool.query(`
-    ALTER TABLE matchs
-    ADD COLUMN IF NOT EXISTS score VARCHAR(100)
-`);
-
         CREATE TABLE IF NOT EXISTS matchs (
             id SERIAL PRIMARY KEY,
             adversaire VARCHAR(100) NOT NULL,
             surface VARCHAR(30) NOT NULL,
-            resultat VARCHAR(20) NOT NULL,
-            CHECK (surface IN ('Dur', 'Terre battue', 'Gazon')),
+            resultat VARCHAR(20) NOT NULL
+                   CHECK (surface IN ('Dur', 'Terre battue', 'Gazon')),
             CHECK (resultat IN ('Victoire', 'Défaite'))
         )
+    `);
+
+    await pool.query(`
+        ALTER TABLE matchs
+        ADD COLUMN IF NOT EXISTS score VARCHAR(100)
     `);
 }
 
 initialiserBase().catch(error => {
-    console.error("Erreur initialisation PostgreSQL :", error.message);
+    console.error(
+        "Erreur initialisation PostgreSQL :",
+        error.message
+    );
 });
 
 /* Recuperer tous les matchs */
