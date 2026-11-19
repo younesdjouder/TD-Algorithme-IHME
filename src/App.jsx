@@ -12,6 +12,7 @@ function App() {
     const [adversaire, setAdversaire] = useState("");
     const [surface, setSurface] = useState("Dur");
     const [resultat, setResultat] = useState("Victoire");
+    const [score, setScore] = useState("");
 
     // Etats pour informer l'utilisateur
     const [chargement, setChargement] = useState(true);
@@ -83,11 +84,14 @@ function App() {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({
-                    adversaire: adversaire.trim(),
-                    surface: surface,
-                    resultat: resultat
-                })
+                
+body: JSON.stringify({
+    adversaire: adversaire.trim(),
+    surface: surface,
+    resultat: resultat,
+    score: score.trim()
+})
+
             });
 
             if (!reponse.ok) {
@@ -103,6 +107,7 @@ function App() {
             ]);
 
             setAdversaire("");
+            setScore("");
         } catch (error) {
             setErreur("Impossible d'enregistrer le match.");
         } finally {
@@ -177,6 +182,19 @@ function App() {
                         <option value="Gazon">Gazon</option>
                     </select>
 
+                    
+<label htmlFor="score">Score du match</label>
+
+<input
+    id="score"
+    type="text"
+    value={score}
+    onChange={event => setScore(event.target.value)}
+    placeholder="Ex : 6-4, 3-6, 7-5"
+    maxLength={100}
+    required
+/>
+
                     <label htmlFor="resultat">Résultat</label>
                     <select
                         id="resultat"
@@ -207,17 +225,21 @@ function App() {
                 ) : (
                     <table>
                         <thead>
-                            <tr>
-                                <th>Adversaire</th>
-                                <th>Surface</th>
-                                <th>Résultat</th>
-                            </tr>
+                            
+<tr>
+    <th>Adversaire</th>
+    <th>Surface</th>
+    <th>Score</th>
+    <th>Résultat</th>
+</tr>
+
                         </thead>
                         <tbody>
                             {matchs.map(match => (
                                 <tr key={match.id}>
                                     <td>{match.adversaire}</td>
                                     <td>{match.surface}</td>
+                                    <td>{match.score || "Non renseigné"}</td>
                                     <td className={
                                         match.resultat === "Victoire"
                                             ? "victoire"
