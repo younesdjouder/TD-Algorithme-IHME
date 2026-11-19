@@ -118,3 +118,45 @@ th {
         padding: 9px 6px;
     }
 }
+
+/* Formulaire d'ajout de match */
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 500px;
+}
+
+form label {
+    font-weight: bold;
+    color: #34483c;
+}
+
+form input,
+form select {
+    padding: 12px;
+    border: 1px solid #ccd9d0;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: inherit;
+}
+
+form button {
+    margin-top: 10px;
+    padding: 13px;
+    background-color: #176b45;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #105335;
+}
+
+section {
+    margin-bottom: 30px;
+}
