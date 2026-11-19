@@ -15,6 +15,7 @@ const pool = new Pool({
 app.use(express.json());
 
 // Verification de l'API et de la base de donnees
+
 app.get("/api/health", async (req, res) => {
     try {
         await pool.query("SELECT 1");
@@ -29,6 +30,7 @@ app.get("/api/health", async (req, res) => {
         });
     }
 });
+
 
 /* Creation de la table si elle n'existe pas */
 
