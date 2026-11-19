@@ -160,3 +160,216 @@ form button:hover {
 section {
     margin-bottom: 30px;
 }
+
+/* ===================================
+   ACEMETRICS - PREMIUM DARK THEME
+   =================================== */
+
+:root {
+    --fond: #0c1716;
+    --carte: #192824;
+    --carte-claire: #22352e;
+    --vert-tennis: #c9f35b;
+    --texte: #f5f8f2;
+    --texte-secondaire: #a8b9ae;
+    --bordure: #35463d;
+}
+
+/* Arriere-plan general */
+
+body {
+    background: var(--fond);
+    color: var(--texte);
+    font-family: "Segoe UI", Arial, sans-serif;
+    padding: 24px;
+    min-height: 100vh;
+}
+
+/* Contenu principal */
+
+main {
+    max-width: 1250px;
+    margin: 0 auto;
+}
+
+/* En-tete */
+
+header {
+    background: linear-gradient(
+        120deg,
+        #193d2e,
+        #101e1a
+    );
+    border: 1px solid var(--bordure);
+    border-radius: 20px;
+    padding: 38px;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    color: var(--vert-tennis);
+    font-size: clamp(32px, 5vw, 48px);
+    margin: 0 0 12px;
+    letter-spacing: -1px;
+}
+
+header p {
+    color: var(--texte-secondaire);
+    font-size: 17px;
+}
+
+/* Titres */
+
+h2 {
+    color: var(--texte);
+    margin-bottom: 20px;
+}
+
+/* Cartes et statistiques */
+
+.card {
+    background: var(--carte);
+    border: 1px solid var(--bordure);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.15);
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 30px;
+}
+
+.stats .card {
+    background: var(--carte);
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.stats .card:hover {
+    transform: translateY(-4px);
+    border-color: var(--vert-tennis);
+}
+
+.stats .card h2 {
+    font-size: 14px;
+    color: var(--texte-secondaire);
+    font-weight: 500;
+}
+
+.stats .card p {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--vert-tennis);
+    margin: 12px 0 0;
+}
+
+/* Formulaire */
+
+form label {
+    color: var(--texte);
+}
+
+form input,
+form select {
+    background: var(--carte-claire);
+    border: 1px solid var(--bordure);
+    color: var(--texte);
+}
+
+form input::placeholder {
+    color: var(--texte-secondaire);
+}
+
+form input:focus,
+form select:focus {
+    outline: 2px solid var(--vert-tennis);
+    outline-offset: 2px;
+}
+
+form button {
+    background: var(--vert-tennis);
+    color: #102019;
+    font-weight: 700;
+}
+
+form button:hover {
+    background: #defb8c;
+}
+
+form button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Historique des matchs */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--carte);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+th {
+    background: var(--carte-claire);
+    color: var(--texte-secondaire);
+    text-align: left;
+    padding: 16px;
+}
+
+td {
+    padding: 16px;
+    border-bottom: 1px solid var(--bordure);
+    color: var(--texte);
+}
+
+tbody tr:hover {
+    background: var(--carte-claire);
+}
+
+.victoire {
+    color: var(--vert-tennis);
+    font-weight: bold;
+}
+
+.defaite {
+    color: #ff8989;
+    font-weight: bold;
+}
+
+/* Adaptation aux ecrans */
+
+@media (max-width: 900px) {
+    .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 12px;
+    }
+
+    header {
+        padding: 24px;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 18px;
+    }
+
+    section {
+        overflow-x: auto;
+    }
+
+    th, td {
+        padding: 12px;
+    }
+}
