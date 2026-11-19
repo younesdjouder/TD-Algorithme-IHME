@@ -34,6 +34,12 @@ app.get("/api/health", async (req, res) => {
 
 async function initialiserBase() {
     await pool.query(`
+    
+await pool.query(`
+    ALTER TABLE matchs
+    ADD COLUMN IF NOT EXISTS score VARCHAR(100)
+`);
+
         CREATE TABLE IF NOT EXISTS matchs (
             id SERIAL PRIMARY KEY,
             adversaire VARCHAR(100) NOT NULL,
@@ -69,7 +75,7 @@ app.get("/api/matchs", async (req, res) => {
 /* Ajouter un nouveau match */
 
 app.post("/api/matchs", async (req, res) => {
-    const { adversaire, surface, resultat } = req.body || {};
+    const { adversaire, surface, resultat, score } = req.body || {};
 
     const surfaces = ["Dur", "Terre battue", "Gazon"];
     const resultats = ["Victoire", "Défaite"];
@@ -80,6 +86,8 @@ app.post("/api/matchs", async (req, res) => {
         adversaire.trim().length > 100 ||
         !surfaces.includes(surface) ||
         !resultats.includes(resultat)
+        typeof score !== "string" ||
+!/^([0-7]-[0-7])(\s*,\s*[0-7]-[0-7]){1,4}$/.test(score.trim()) ||
     ) {
         return res.status(400).json({
             erreur: "Informations du match invalides"
@@ -87,12 +95,14 @@ app.post("/api/matchs", async (req, res) => {
     }
 
     try {
-        const reponse = await pool.query(
-            `INSERT INTO matchs (adversaire, surface, resultat)
-             VALUES ($1, $2, $3)
-             RETURNING *`,
-            [adversaire.trim(), surface, resultat]
-        );
+        
+const reponse = await pool.query(
+    `INSERT INTO matchs (adversaire, surface, resultat, score)
+     VALUES ($1, $2, $3, $4)
+     RETURNING *`,
+    [adversaire.trim(), surface, resultat, score.trim()]
+);
+
 
         res.status(201).json(reponse.rows[0]);
     } catch (error) {
