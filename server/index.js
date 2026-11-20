@@ -209,7 +209,42 @@ app.post("/api/matchs", async (req, res) => {
    INSCRIPTION DES UTILISATEURS
    ===================================== */
 
-app.post("/api/auth/inscription", async (req, res) => {
+/* =====================================
+   PROTECTION DES INSCRIPTIONS
+   ===================================== */
+
+const tentativesInscription = new Map();
+
+function limiterInscriptions(req, res, next) {
+
+    const maintenant = Date.now();
+    const fenetre = 15 * 60 * 1000;
+    const maximum = 5;
+
+    const ip = req.ip || req.socket.remoteAddress;
+
+    const historique = tentativesInscription.get(ip) || [];
+
+    const tentativesRecentes = historique.filter(
+        date => maintenant - date < fenetre
+    );
+
+    if (tentativesRecentes.length >= maximum) {
+        tentativesInscription.set(ip, tentativesRecentes);
+
+        return res.status(429).json({
+            erreur: "Trop de tentatives. Reessayez plus tard."
+        });
+    }
+
+    tentativesRecentes.push(maintenant);
+    tentativesInscription.set(ip, tentativesRecentes);
+
+    next();
+}
+
+
+app.post("/api/auth/inscription", limiterInscriptions, async (req, res) => {
 
     // Inscription desactivee tant que
     // les protections ne sont pas terminees
