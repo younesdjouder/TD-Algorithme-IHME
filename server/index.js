@@ -366,6 +366,27 @@ app.post("/api/auth/inscription", limiterInscriptions, async (req, res) => {
 });
 
 
+/* =====================================
+   CONNEXION DES UTILISATEURS
+   ===================================== */
+
+app.post("/api/auth/connexion", async (req, res) => {
+
+    // Connexion volontairement desactivee
+    if (process.env.ENABLE_LOGIN !== "true") {
+        return res.status(503).json({
+            erreur: "Connexion bientot disponible"
+        });
+    }
+
+    // Securite : aucune connexion n'est autorisee
+    // tant que les sessions ne sont pas implementees.
+    return res.status(503).json({
+        erreur: "Sessions en cours de preparation"
+    });
+});
+
+
 // =====================================
 // 6. APPLICATION REACT
 // =====================================
