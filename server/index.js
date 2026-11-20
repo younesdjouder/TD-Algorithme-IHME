@@ -205,6 +205,85 @@ app.post("/api/matchs", async (req, res) => {
     }
 });
 
+/* =====================================
+   INSCRIPTION DES UTILISATEURS
+   ===================================== */
+
+app.post("/api/auth/inscription", async (req, res) => {
+
+    // Inscription desactivee tant que
+    // les protections ne sont pas terminees
+    if (process.env.ENABLE_REGISTRATION !== "true") {
+        return res.status(503).json({
+            erreur: "Inscription bientot disponible"
+        });
+    }
+
+    const { pseudo, email, motDePasse } = req.body || {};
+
+    // 1. Verifier les types
+    if (
+        typeof pseudo !== "string" ||
+        typeof email !== "string" ||
+        typeof motDePasse !== "string"
+    ) {
+        return res.status(400).json({
+            erreur: "Informations invalides"
+        });
+    }
+
+    // 2. Nettoyer les informations
+    const pseudoPropre = pseudo.trim();
+    const emailPropre = email.trim().toLowerCase();
+
+    // 3. Verifier les longueurs et l'email
+    if (
+        pseudoPropre.length < 3 ||
+        pseudoPropre.length > 50 ||
+        emailPropre.length > 255 ||
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailPropre) ||
+        motDePasse.length < 15 ||
+        motDePasse.length > 128 ||
+        Buffer.byteLength(motDePasse, "utf8") > 256
+    ) {
+        return res.status(400).json({
+            erreur: "Pseudo, email ou mot de passe invalide"
+        });
+    }
+
+    try {
+        // 4. Hacher le mot de passe
+        const empreinte = await hacherMotDePasse(motDePasse);
+
+        // 5. Enregistrer dans PostgreSQL
+        const reponse = await pool.query(
+            `INSERT INTO utilisateurs
+             (pseudo, email, mot_de_passe_hash)
+             VALUES ($1, $2, $3)
+             ON CONFLICT (email) DO NOTHING
+             RETURNING id, pseudo, date_creation`,
+            [pseudoPropre, emailPropre, empreinte]
+        );
+
+        // Reponse generique pour limiter
+        // la divulgation des comptes existants
+        return res.status(202).json({
+            message: "Demande d'inscription traitee"
+        });
+
+    } catch (error) {
+        console.error(
+            "Erreur inscription :",
+            error.message
+        );
+
+        return res.status(500).json({
+            erreur: "Erreur lors de l'inscription"
+        });
+    }
+});
+
+
 // =====================================
 // 6. APPLICATION REACT
 // =====================================
