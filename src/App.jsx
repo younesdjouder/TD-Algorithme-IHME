@@ -248,6 +248,53 @@ body: JSON.stringify({
 
                 {erreur && <p role="alert">{erreur}</p>}
             </section>
+            
+<section className="card performance-card">
+    <div className="performance-header">
+        <div>
+            <span className="performance-label">
+                ANALYSE DES PERFORMANCES
+            </span>
+            <h2>Répartition des résultats</h2>
+        </div>
+    </div>
+
+    <div className="performance-content">
+        <div
+            className="donut-chart"
+            style={{
+                background: total > 0
+                    ? `conic-gradient(
+                        #c9f35b 0% ${taux}%,
+                        #60786a ${taux}% 100%
+                    )`
+                    : "#35463d"
+            }}
+            role="img"
+            aria-label={`${taux}% de victoires`}
+        >
+            <div className="donut-center">
+                <strong>{taux}%</strong>
+                <span>de victoires</span>
+            </div>
+        </div>
+
+        <div className="performance-details">
+            <div className="performance-item">
+                <span>🟢 Victoires</span>
+                <strong>{victoires}</strong>
+            </div>
+
+            <div className="performance-item">
+                <span>⚪ Défaites</span>
+                <strong>{defaites}</strong>
+            </div>
+
+            <p>{total} matchs analysés</p>
+        </div>
+    </div>
+</section>
+
 
           <section id="historique">
                 <h2>Historique des matchs</h2>
