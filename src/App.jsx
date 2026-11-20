@@ -130,6 +130,11 @@ body: JSON.stringify({
         <a href="#historique">Mes matchs</a>
         <a href="#ajouter-match" className="nav-button">
             + Ajouter un match
+            
+<a href="#connexion" className="nav-button">
+    Connexion
+</a>
+
         </a>
     </div>
 </nav>
@@ -338,6 +343,45 @@ body: JSON.stringify({
 
                 <p>Données fictives de démonstration.</p>
             </section>
+            
+<section className="card" id="connexion">
+    <h2>Connexion à AceMetrics</h2>
+
+    <p>
+        Retrouve prochainement ton espace personnel,
+        tes matchs et tes statistiques.
+    </p>
+
+    <form onSubmit={(event) => event.preventDefault()}>
+        <label htmlFor="email">Adresse e-mail</label>
+        <input
+            id="email"
+            type="email"
+            placeholder="joueur@exemple.com"
+            autoComplete="email"
+            disabled
+        />
+
+        <label htmlFor="motdepasse">Mot de passe</label>
+        <input
+            id="motdepasse"
+            type="password"
+            placeholder="Mot de passe"
+            autoComplete="current-password"
+            disabled
+        />
+
+        <button type="button" disabled>
+            Se connecter
+        </button>
+    </form>
+
+    <p>
+        Fonctionnalité en préparation.
+        Aucun compte réel ne peut encore être créé.
+    </p>
+</section>
+
         </main>
     );
 }
