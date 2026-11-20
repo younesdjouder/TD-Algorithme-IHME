@@ -117,8 +117,24 @@ body: JSON.stringify({
 
     return (
         <main>
-           
-<header className="hero">
+
+            
+<nav className="navbar" aria-label="Navigation principale">
+    <a href="#accueil" className="navbar-logo">
+        <span className="logo-icon">●</span>
+        <span>AceMetrics</span>
+    </a>
+
+    <div className="navbar-links">
+        <a href="#dashboard">Tableau de bord</a>
+        <a href="#historique">Mes matchs</a>
+        <a href="#ajouter-match" className="nav-button">
+            + Ajouter un match
+        </a>
+    </div>
+</nav>
+
+<header className="hero" id="accueil">
     <div className="hero-content">
         <span className="hero-label">
             TENNIS PERFORMANCE ANALYTICS
@@ -140,7 +156,7 @@ body: JSON.stringify({
 </header>
 
 
-            <section>
+            <section id="dashboard">
                 <h2>Vue d'ensemble</h2>
 
                 <div className="stats">
@@ -233,7 +249,7 @@ body: JSON.stringify({
                 {erreur && <p role="alert">{erreur}</p>}
             </section>
 
-            <section>
+          <section id="historique">
                 <h2>Historique des matchs</h2>
 
                 {chargement ? (
