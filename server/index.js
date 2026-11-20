@@ -6,6 +6,37 @@ const { Pool } = require("pg");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const crypto = require("node:crypto");
+const { promisify } = require("node:util");
+
+const scryptAsync = promisify(crypto.scrypt);
+
+async function hacherMotDePasse(motDePasse) {
+    const sel = crypto.randomBytes(16);
+
+    const empreinte = await scryptAsync(
+        motDePasse,
+        sel,
+        64,
+        {
+            N: 131072,
+            r: 8,
+            p: 1,
+            maxmem: 256 * 1024 * 1024
+        }
+    );
+
+    return [
+        "scrypt",
+        "131072",
+        "8",
+        "1",
+        sel.toString("hex"),
+        empreinte.toString("hex")
+    ].join(":");
+}
+
+
 // =====================================
 // 1. CONNEXION POSTGRESQL
 // =====================================
