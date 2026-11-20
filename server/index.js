@@ -68,6 +68,23 @@ async function initialiserBase() {
         ALTER TABLE matchs
         ADD COLUMN IF NOT EXISTS score VARCHAR(100)
     `);
+    
+    // =====================================
+    // CREATION DE LA TABLE UTILISATEURS
+    // =====================================
+
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS utilisateurs (
+            id SERIAL PRIMARY KEY,
+            pseudo VARCHAR(50) NOT NULL,
+            email VARCHAR(255) NOT NULL UNIQUE,
+            mot_de_passe_hash TEXT NOT NULL,
+            date_creation TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+        )
+    `);
+
+    console.log("Table utilisateurs initialisee");
+
 
     console.log("Base PostgreSQL initialisee");
 }
