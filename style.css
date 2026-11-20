@@ -766,3 +766,75 @@ html {
         font-size: 24px;
     }
 }
+
+/* =====================================
+   ACEMETRICS - AUTHENTIFICATION TABS
+   ===================================== */
+
+/* Conteneur des deux onglets */
+
+#connexion .auth-tabs {
+    display: flex;
+    gap: 6px;
+    padding: 6px;
+    margin: 24px 0;
+    background: #101d19;
+    border: 1px solid #35463d;
+    border-radius: 12px;
+}
+
+/* Boutons des onglets */
+
+#connexion .auth-tabs button {
+    flex: 1;
+    width: auto;
+    margin: 0;
+    padding: 13px 12px;
+    border: none;
+    border-radius: 9px;
+    background: transparent;
+    color: #a8b9ae;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+/* Onglet selectionne */
+
+#connexion .auth-tabs button.active {
+    background: #c9f35b;
+    color: #102019;
+    box-shadow: 0 3px 12px rgba(201, 243, 91, 0.15);
+}
+
+/* Survol d'un onglet non selectionne */
+
+#connexion .auth-tabs button:not(.active):hover {
+    background: #294035;
+    color: #ffffff;
+}
+
+/* Navigation au clavier */
+
+#connexion .auth-tabs button:focus-visible {
+    outline: 2px solid #c9f35b;
+    outline-offset: 3px;
+}
+
+/* Adaptation aux petits ecrans */
+
+@media (max-width: 400px) {
+    #connexion .auth-tabs button {
+        font-size: 13px;
+        padding: 12px 8px;
+    }
+}
+
+/* Respect des preferences d'animation */
+
+@media (prefers-reduced-motion: reduce) {
+    #connexion .auth-tabs button {
+        transition: none;
+    }
+}
