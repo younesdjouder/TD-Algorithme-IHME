@@ -24,6 +24,53 @@ async function hacherMotDePasse(motDePasse) {
             p: 1,
             maxmem: 256 * 1024 * 1024
         }
+        
+async function verifierMotDePasse(motDePasse, hashStocke) {
+    // Verifier le format des donnees
+    if (
+        typeof motDePasse !== "string" ||
+        typeof hashStocke !== "string"
+    ) {
+        return false;
+    }
+
+    const parties = hashStocke.split(":");
+
+    if (
+        parties.length !== 6 ||
+        parties[0] !== "scrypt" ||
+        parties[1] !== "131072" ||
+        parties[2] !== "8" ||
+        parties[3] !== "1" ||
+        !/^[0-9a-f]{32}$/.test(parties[4]) ||
+        !/^[0-9a-f]{128}$/.test(parties[5])
+    ) {
+        return false;
+    }
+
+    const sel = Buffer.from(parties[4], "hex");
+    const empreinteStockee = Buffer.from(parties[5], "hex");
+
+    // Recalculer l'empreinte
+    const empreinteCalculee = await scryptAsync(
+        motDePasse,
+        sel,
+        64,
+        {
+            N: 131072,
+            r: 8,
+            p: 1,
+            maxmem: 256 * 1024 * 1024
+        }
+    );
+
+    // Comparer les empreintes
+    return crypto.timingSafeEqual(
+        empreinteCalculee,
+        empreinteStockee
+    );
+}
+
     );
 
     return [
