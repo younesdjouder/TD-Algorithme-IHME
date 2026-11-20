@@ -7,6 +7,7 @@ const API_URL = import.meta.env.BASE_URL + "api/matchs";
 function App() {
     // Les matchs seront charges depuis PostgreSQL
     const [matchs, setMatchs] = useState([]);
+const [modeAuth, setModeAuth] = useState("connexion");
 
     // Informations saisies dans le formulaire
     const [adversaire, setAdversaire] = useState("");
@@ -344,35 +345,87 @@ body: JSON.stringify({
                 <p>Données fictives de démonstration.</p>
             </section>
             
+
 <section className="card" id="connexion">
-    <h2>Connexion à AceMetrics</h2>
+
+    <h2>Bienvenue sur AceMetrics</h2>
 
     <p>
-        Retrouve prochainement ton espace personnel,
-        tes matchs et tes statistiques.
+        Retrouve ton espace personnel de tennis.
     </p>
 
+    <div className="auth-tabs">
+        <button
+            type="button"
+            onClick={() => setModeAuth("connexion")}
+            className={
+                modeAuth === "connexion" ? "active" : ""
+            }
+        >
+            Connexion
+        </button>
+
+        <button
+            type="button"
+            onClick={() => setModeAuth("inscription")}
+            className={
+                modeAuth === "inscription" ? "active" : ""
+            }
+        >
+            Inscription
+        </button>
+    </div>
+
     <form onSubmit={(event) => event.preventDefault()}>
-        <label htmlFor="email">Adresse e-mail</label>
+
+        {modeAuth === "inscription" && (
+            <>
+                <label htmlFor="auth-pseudo">
+                    Pseudo
+                </label>
+
+                <input
+                    id="auth-pseudo"
+                    type="text"
+                    placeholder="TennisPlayer"
+                    autoComplete="username"
+                    disabled
+                />
+            </>
+        )}
+
+        <label htmlFor="auth-email">
+            Adresse e-mail
+        </label>
+
         <input
-            id="email"
+            id="auth-email"
             type="email"
             placeholder="joueur@exemple.com"
             autoComplete="email"
             disabled
         />
 
-        <label htmlFor="motdepasse">Mot de passe</label>
+        <label htmlFor="auth-password">
+            Mot de passe
+        </label>
+
         <input
-            id="motdepasse"
+            id="auth-password"
             type="password"
             placeholder="Mot de passe"
-            autoComplete="current-password"
+            autoComplete={
+                modeAuth === "inscription"
+                    ? "new-password"
+                    : "current-password"
+            }
             disabled
         />
 
-        <button type="button" disabled>
-            Se connecter
+        <button type="submit" disabled>
+            {modeAuth === "connexion"
+                ? "Se connecter"
+                : "Créer mon compte"}
         </button>
     </form>
 
@@ -380,7 +433,9 @@ body: JSON.stringify({
         Fonctionnalité en préparation.
         Aucun compte réel ne peut encore être créé.
     </p>
+
 </section>
+
 
         </main>
     );
