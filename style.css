@@ -673,3 +673,96 @@ html {
         width: 100%;
     }
 }
+
+/* ====================================
+   ACEMETRICS - CONNEXION PREMIUM
+   ==================================== */
+
+#connexion {
+    max-width: 520px;
+    margin: 50px auto;
+    padding: 36px;
+    background: #192824;
+    border: 1px solid #35463d;
+    border-radius: 22px;
+    box-shadow: 0 16px 45px rgba(0, 0, 0, 0.25);
+}
+
+#connexion h2 {
+    color: #f5f8f2;
+    font-size: 28px;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+#connexion > p {
+    color: #a8b9ae;
+    text-align: center;
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+
+#connexion form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#connexion label {
+    color: #d3e1d6;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+#connexion input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 15px;
+    background: #22352e;
+    border: 1px solid #35463d;
+    border-radius: 10px;
+    color: #f5f8f2;
+    font-size: 15px;
+}
+
+#connexion input::placeholder {
+    color: #a8b9ae;
+}
+
+#connexion input:focus-visible {
+    outline: 2px solid #c9f35b;
+    outline-offset: 2px;
+}
+
+#connexion input:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+#connexion button {
+    width: 100%;
+    margin-top: 14px;
+    padding: 15px;
+    background: #c9f35b;
+    color: #102019;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+#connexion button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+    #connexion {
+        margin: 30px auto;
+        padding: 22px;
+    }
+
+    #connexion h2 {
+        font-size: 24px;
+    }
+}
